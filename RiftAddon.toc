@@ -1,0 +1,26 @@
+Identifier = "Baggotry"
+
+Version = "VERSION"
+
+Email = "seebs@seebs.net"
+
+Dependencies = { LibGetOpt = { "required", "before" } }
+Embed = { LibGetOpt = true }
+
+Name = {
+  English = "Baggotry",
+  French = "Baggotry",
+  German = "Baggotry",
+}
+NameShort = "Baggotry"
+
+Description = {
+  English = "What is this baggotry?"
+}
+
+RunOnStartup = {
+  "Baggotry.lua"
+}
+
+Environment = { "1.5", "1.6" }
+
