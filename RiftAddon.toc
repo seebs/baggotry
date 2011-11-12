@@ -4,8 +4,11 @@ Version = "VERSION"
 
 Email = "seebs@seebs.net"
 
-Dependencies = { LibGetOpt = { "required", "before" } }
-Embed = { LibGetOpt = true }
+Dependencies = {
+	LibGetOpt = { "required", "before" },
+	LibBaggotry  = { "required", "before" },
+}
+Embed = { LibGetOpt = true, LibBaggotry = true }
 
 Name = {
   English = "Baggotry",
@@ -22,5 +25,5 @@ RunOnStartup = {
   "Baggotry.lua"
 }
 
-Environment = { "1.5", "1.6" }
+Environment = { "1.6" }
 
