@@ -64,7 +64,11 @@ function bag.slashcommand(args)
     filter:dump()
     return
   end
-  lbag.dump(filter)
+  if merge then
+    lbag.merge(filter)
+  else
+    lbag.dump(filter)
+  end
 end
 
 Library.LibGetOpt.makeslash("c:CDf:MS#vx", "Baggotry", "bag", bag.slashcommand)
