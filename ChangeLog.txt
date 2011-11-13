@@ -1,6 +1,9 @@
 2011/11/13:
 	* Adapted to the revised stacking mechanism
 	* Predefined a couple of filters for stuff you might want
+	* Added demo of .iterate()
+	* Added -q option
+	* Bump to 0.2 since it's definitely new.
 
 2011/11/12:
 	* Moved to embedded LibBaggotry
