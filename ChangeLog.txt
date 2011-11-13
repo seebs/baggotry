@@ -1,2 +1,7 @@
+2011/11/12:
+	* Moved to embedded LibBaggotry
+	* Reimplemented and reworked a bunch of stuff.
+	* Now have a mostly-usable interface.
+
 2011/11/09:
 	* Started, because Beloved Spouse loves the name

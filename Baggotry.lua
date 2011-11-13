@@ -15,12 +15,11 @@ function bag.printf(fmt, ...)
 end
 
 function bag.slashcommand(args)
-  local count, merge, split
+  local merge, split
   local filter
-  count = false
   merge = false
   split = false
-  split_into = 10
+  local stack_size = nil
   if args['v'] then
     bag.printf("version %s", bag.version)
     return
@@ -44,6 +43,10 @@ function bag.slashcommand(args)
     filtery = function(...) filter:include(...) end
   end
 
+  if args['n'] then
+    stack_size = args['n']
+  end
+
   if args['c'] then
     filtery('category', args['c'])
   end
@@ -51,24 +54,19 @@ function bag.slashcommand(args)
     filtery('name', item_name)
   end
 
-  if args['C'] then
-    count = true
-  end
   if args['M'] then
     merge = true
   end
   if args['S'] then
-    split = args['s']
-  end
-  if args['D'] then
-    filter:dump()
-    return
+    split = true
   end
   if merge then
-    lbag.merge(filter)
+    lbag.merge(filter, stack_size)
+  elseif split then
+    lbag.split(filter, stack_size)
   else
     lbag.dump(filter)
   end
 end
 
-Library.LibGetOpt.makeslash("c:CDf:MS#vx", "Baggotry", "bag", bag.slashcommand)
+Library.LibGetOpt.makeslash("c:f:MSn#vx", "Baggotry", "bag", bag.slashcommand)
