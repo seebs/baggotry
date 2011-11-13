@@ -22,6 +22,15 @@ function valuation(details, slot, value)
   return value
 end
 
+function bag.strsplit(s, p)
+  local idx = string.find(s, p)
+  if idx then
+    return s.sub(s, 1, idx - 1), bag.strsplit(string.sub(s, idx + 1), p)
+  else
+    return s
+  end
+end
+
 function bag.slashcommand(args)
   local stack = false
   local filter
@@ -78,13 +87,17 @@ function bag.slashcommand(args)
   end
   if args['q'] then
     if lbag.rarity_p(args['q']) then
-      filtery('rarity', args['q'])
+      filtery('>=', 'rarity', args['q'])
     else
       bag.printf("Error: '%s' is not a valid rarity.", args['q'])
     end
   end
-  for k, item_name in pairs(args['leftover_args']) do
-    filtery('name', item_name)
+  for _, word in pairs(args['leftover_args']) do
+    if string.match(word, ':') then
+      filtery(bag.strsplit(word, ':'))
+    else
+      filtery('name', word)
+    end
   end
 
   if args['S'] then

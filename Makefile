@@ -1,4 +1,4 @@
-VERSION=0.2
+VERSION=0.3
 PACKAGE=Baggotry
 EMBEDS=getopt libbaggotry
 

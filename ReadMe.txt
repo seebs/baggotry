@@ -5,12 +5,17 @@ also occasionally useful, since autosplitting and automerging are two commonly
 requested features.
 
 Usage:
-	/bag [-f filter] [-rx] [-l] [-SD] [-c category] [-q rarity] [name ...]
+	/bag [-f filter] [-rx] [-l] [-SD] [-c category] [-q rarity] [word ...]
 
 [-f filter] lets you name filters; "filter" can be a string and is used
 as an index into a table, and modifiers are stored in that filter, which
 then persists through the rest of your session.  If you do not specify
 a filter, each /bag invocation starts a brand new filter.
+
+If any 'words' are specified at the end of the line, they are treated either
+as item names to :include (the default), or as colon-separated argument
+lists for Filter:include().  For instance, 'stack:99' would check for stacks
+of 99 items, while 'stack:>:3' would check for stacks of more than 3 items.
 
 Modifiers like "-c category" or "name" are added to the filter, as :includes
 by default, or as :requires (-r) or :excludes (-x).  See LibBaggotry for

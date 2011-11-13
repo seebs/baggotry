@@ -4,6 +4,8 @@
 	* Added demo of .iterate()
 	* Added -q option
 	* Bump to 0.2 since it's definitely new.
+	* Added relops/: support.
+	* Bump to 0.3 for upload
 
 2011/11/12:
 	* Moved to embedded LibBaggotry
