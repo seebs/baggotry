@@ -1,0 +1,2 @@
+Add some way to save filters, at least in part.
+
