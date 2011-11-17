@@ -54,3 +54,8 @@ You can dump a specific filter:
 and see what rules that filter uses.
 
 You can sum the value of a filter with the -s option.
+
+Other characters can be referred to as
+	-C Shard/faction/Charname
+or
+	-C Charname (assumes same faction and shard)

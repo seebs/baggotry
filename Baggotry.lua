@@ -85,6 +85,19 @@ function bag.slashcommand(args)
   if args['c'] then
     filtery('category', args['c'])
   end
+  if args['C'] then
+    local spec = filter:slot()
+    local slotspec, charspec = lbag.slotspec_p(spec)
+    if not slotspec then
+      slotspec = Utility.Item.Slot.All()
+    end
+    if string.match(args['C'], '/') then
+      charspec = args['C']
+    else
+      charspec = lbag.char_identifier(args['C'])
+    end
+    filter:slot(string.format("%s:%s", charspec, slotspec))
+  end
   if args['q'] then
     if lbag.rarity_p(args['q']) then
       filtery('>=', 'rarity', args['q'])
@@ -153,4 +166,4 @@ f:exclude('rarity', 'common')
 f:descr("Trash (grey items)")
 bag.filters['t'] = f
 
-Library.LibGetOpt.makeslash("c:d:Df:lq:rsS#vx", "Baggotry", "bag", bag.slashcommand)
+Library.LibGetOpt.makeslash("c:C:d:Df:lq:rsS#vx", "Baggotry", "bag", bag.slashcommand)

@@ -1,3 +1,6 @@
+2011/11/16:
+	* Added initial support for alts ("-C charname")
+
 2011/11/13:
 	* Adapted to the revised stacking mechanism
 	* Predefined a couple of filters for stuff you might want
