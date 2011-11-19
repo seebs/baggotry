@@ -5,7 +5,8 @@ also occasionally useful, since autosplitting and automerging are two commonly
 requested features.
 
 Usage:
-	/bag [-f filter] [-rx] [-l] [-SD] [-c category] [-q rarity] [word ...]
+	/bag [-C char] [-f filter] [-rx] [-l] [-SD] [-c category]
+	     [-q rarity] [word ...]
 
 [-f filter] lets you name filters; "filter" can be a string and is used
 as an index into a table, and modifiers are stored in that filter, which
@@ -59,3 +60,4 @@ Other characters can be referred to as
 	-C Shard/faction/Charname
 or
 	-C Charname (assumes same faction and shard)
+As a convenience, '-C *' means 'everyone on same faction and shard'.
