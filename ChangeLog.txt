@@ -1,6 +1,7 @@
 2011/11/20:
 	* Fix bug in rarity specifications.
 	* Call that 0.5 to release bug fix.
+	* Merge in the inventory-type specifier feature from LootSorter.
 
 2011/11/19:
 	* 0.4 release with slight cleanup and new LibBaggotry.

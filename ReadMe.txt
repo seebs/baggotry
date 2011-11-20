@@ -6,7 +6,7 @@ requested features.
 
 Usage:
 	/bag [-C char] [-f filter] [-rx] [-l] [-SD] [-c category]
-	     [-q rarity] [word ...]
+	     [-beiw] [-q rarity] [word ...]
 
 [-f filter] lets you name filters; "filter" can be a string and is used
 as an index into a table, and modifiers are stored in that filter, which
@@ -21,6 +21,9 @@ of 99 items, while 'stack:>:3' would check for stacks of more than 3 items.
 Modifiers like "-c category" or "name" are added to the filter, as :includes
 by default, or as :requires (-r) or :excludes (-x).  See LibBaggotry for
 explanations.
+
+[-beiw] specify bank, equipment, inventory, and wardrobe items; if you
+don't specify any of these, the default is bank and inventory.
 
 The default is just to dump the list of items found.  The interesting
 part is the -S (stack) option.  This tries to move things into stacks of

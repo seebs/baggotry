@@ -33,6 +33,7 @@ end
 
 function bag.slashcommand(args)
   local stack = false
+  local slotspecs = {}
   local filter
   local stack_size = nil
   if not args then
@@ -45,7 +46,6 @@ function bag.slashcommand(args)
   if args['f'] then
     if not bag.filters[args['f']] then
       filter = lbag.filter()
-      filter:slot(Utility.Item.Slot.Inventory())
       bag.filters[args['f']] = filter
     else
       filter = bag.filters[args['f']]
@@ -54,6 +54,25 @@ function bag.slashcommand(args)
     filter = lbag.filter()
     filter:slot(Utility.Item.Slot.Inventory())
   end
+
+  if args['b'] then
+    table.insert(slotspecs, Utility.Item.Slot.Bank())
+  end
+  if args['e'] then
+    table.insert(slotspecs, Utility.Item.Slot.Equipment())
+  end
+  if args['i'] then
+    table.insert(slotspecs, Utility.Item.Slot.Inventory())
+  end
+  if args['w'] then
+    table.insert(slotspecs, Utility.Item.Slot.Wardrobe())
+  end
+
+  if table.getn(slotspecs) == 0 then
+    table.insert(slotspecs, Utility.Item.Slot.Bank())
+    table.insert(slotspecs, Utility.Item.Slot.Inventory())
+  end
+
 
   if args['d'] then
     filter:descr(args['d'])
@@ -86,21 +105,27 @@ function bag.slashcommand(args)
     filtery('category', args['c'])
   end
   if args['C'] then
-    local spec = filter:slot()
-    local slotspec, charspec = lbag.slotspec_p(spec)
-    if not slotspec then
-      slotspec = Utility.Item.Slot.All()
-    end
+    local newspec = {}
     if string.match(args['C'], '/') then
       charspec = args['C']
     else
       charspec = lbag.char_identifier(args['C'])
     end
-    filter:slot(string.format("%s:%s", charspec, slotspec))
+    for i, v in ipairs(slotspecs) do
+      local slotspec, _ = lbag.slotspec_p(v)
+      if slotspec then
+        table.insert(newspec, string.format("%s:%s", charspec, slotspec))
+      else
+        bag.printf("Huh?  Got invalid slotspec '%s'.", v)
+      end
+    end
+    filter:slot(unpack(newspec))
+  else
+    filter:slot(unpack(slotspecs))
   end
   if args['q'] then
     if lbag.rarity_p(args['q']) then
-      filtery('>=', 'rarity', args['q'])
+      filtery('rarity', '>=', args['q'])
     else
       bag.printf("Error: '%s' is not a valid rarity.", args['q'])
     end
@@ -166,4 +191,4 @@ f:exclude('rarity', 'common')
 f:descr("Trash (grey items)")
 bag.filters['t'] = f
 
-Library.LibGetOpt.makeslash("c:C:d:Df:lq:rsS#vx", "Baggotry", "bag", bag.slashcommand)
+Library.LibGetOpt.makeslash("bc:C:d:Def:ilq:rsS#vwx", "Baggotry", "bag", bag.slashcommand)
