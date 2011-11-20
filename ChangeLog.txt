@@ -2,6 +2,8 @@
 	* Fix bug in rarity specifications.
 	* Call that 0.5 to release bug fix.
 	* Merge in the inventory-type specifier feature from LootSorter.
+	* Move argument processing over into LibBaggotry.
+	* Call this 0.6.
 
 2011/11/19:
 	* 0.4 release with slight cleanup and new LibBaggotry.

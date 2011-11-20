@@ -31,8 +31,27 @@ function bag.strsplit(s, p)
   end
 end
 
+function bag.filtery(filter, ...)
+  local args = { ... }
+  last = table.getn(args)
+  if last and last > 0 then
+    local char = string.sub(args[last], 1, 1)
+    if char == '+' then
+      args[last] = string.sub(args[last], 2)
+      filter:require(unpack(args))
+    elseif char == '!' then
+      args[last] = string.sub(args[last], 2)
+      filter:exclude(unpack(args))
+    else
+      filter:include(unpack(args))
+    end
+  end
+end
+
 function bag.slashcommand(args)
   local stack = false
+  local dump = false
+  local sum = false
   local slotspecs = {}
   local filter
   local stack_size = nil
@@ -50,42 +69,15 @@ function bag.slashcommand(args)
     else
       filter = bag.filters[args['f']]
     end
+    args['f'] = nil
   else
     filter = lbag.filter()
     filter:slot(Utility.Item.Slot.Inventory())
   end
 
-  if args['b'] then
-    table.insert(slotspecs, Utility.Item.Slot.Bank())
-  end
-  if args['e'] then
-    table.insert(slotspecs, Utility.Item.Slot.Equipment())
-  end
-  if args['i'] then
-    table.insert(slotspecs, Utility.Item.Slot.Inventory())
-  end
-  if args['w'] then
-    table.insert(slotspecs, Utility.Item.Slot.Wardrobe())
-  end
-
-  if table.getn(slotspecs) == 0 then
-    table.insert(slotspecs, Utility.Item.Slot.Bank())
-    table.insert(slotspecs, Utility.Item.Slot.Inventory())
-  end
-
-
   if args['d'] then
-    filter:descr(args['d'])
-  end
-
-  if args['x'] then
-    filtery = function(...) filter:exclude(...) end
-  else
-    if args['r'] then
-      filtery = function(...) filter:require(...) end
-    else
-      filtery = function(...) filter:include(...) end
-    end
+    filter:describe(args['d'])
+    args['d'] = nil
   end
 
   if args['l'] then
@@ -100,53 +92,28 @@ function bag.slashcommand(args)
     end
     return
   end
-
-  if args['c'] then
-    filtery('category', args['c'])
-  end
-  if args['C'] then
-    local newspec = {}
-    if string.match(args['C'], '/') then
-      charspec = args['C']
-    else
-      charspec = lbag.char_identifier(args['C'])
-    end
-    for i, v in ipairs(slotspecs) do
-      local slotspec, _ = lbag.slotspec_p(v)
-      if slotspec then
-        table.insert(newspec, string.format("%s:%s", charspec, slotspec))
-      else
-        bag.printf("Huh?  Got invalid slotspec '%s'.", v)
-      end
-    end
-    filter:slot(unpack(newspec))
-  else
-    filter:slot(unpack(slotspecs))
-  end
-  if args['q'] then
-    if lbag.rarity_p(args['q']) then
-      filtery('rarity', '>=', args['q'])
-    else
-      bag.printf("Error: '%s' is not a valid rarity.", args['q'])
-    end
-  end
-  for _, word in pairs(args['leftover_args']) do
-    if string.match(word, ':') then
-      filtery(bag.strsplit(word, ':'))
-    else
-      filtery('name', word)
-    end
-  end
-
   if args['S'] then
     stack = true
     stack_size = args['S']
+    args['S'] = nil
   end
   if args['D'] then
+    dump = true
+    args['D'] = nil
+  end
+  if args['s'] then
+    sum = true
+    args['s'] = nil
+  end
+
+  filter:from_args(args)
+
+  if dump then
     filter:dump()
     return
   end
-  if args['s'] then
+
+  if sum then
     local total, count
 
     total, count = lbag.iterate(filter, valuation)
@@ -178,17 +145,17 @@ local f
 f = lbag.filter()
 f:require('category', 'collectible')
 f:require('stackMax', 99)
-f:descr("Collectibles (such as artifacts)")
+f:describe("Collectibles (such as artifacts)")
 bag.filters['a'] = f
 
 f = lbag.filter()
 f:include('category', 'material')
-f:descr("Materials")
+f:describe("Materials")
 bag.filters['m'] = f
 
 f = lbag.filter()
 f:exclude('rarity', 'common')
-f:descr("Trash (grey items)")
+f:describe("Trash (grey items)")
 bag.filters['t'] = f
 
-Library.LibGetOpt.makeslash("bc:C:d:Def:ilq:rsS#vwx", "Baggotry", "bag", bag.slashcommand)
+Library.LibGetOpt.makeslash(lbag.filter():argstring() .. "d:Df:lsS#v", "Baggotry", "bag", bag.slashcommand)

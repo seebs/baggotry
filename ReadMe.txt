@@ -5,7 +5,7 @@ also occasionally useful, since autosplitting and automerging are two commonly
 requested features.
 
 Usage:
-	/bag [-C char] [-f filter] [-rx] [-l] [-SD] [-c category]
+	/bag [-C char] [-f filter] [-l] [-SD] [-c category]
 	     [-beiw] [-q rarity] [word ...]
 
 [-f filter] lets you name filters; "filter" can be a string and is used
@@ -19,8 +19,8 @@ lists for Filter:include().  For instance, 'stack:99' would check for stacks
 of 99 items, while 'stack:>:3' would check for stacks of more than 3 items.
 
 Modifiers like "-c category" or "name" are added to the filter, as :includes
-by default, or as :requires (-r) or :excludes (-x).  See LibBaggotry for
-explanations.
+by default.  If you prefix a value with '+', it becomes a :requires, and
+with '!', it becomes a :excludes.
 
 [-beiw] specify bank, equipment, inventory, and wardrobe items; if you
 don't specify any of these, the default is bank and inventory.
