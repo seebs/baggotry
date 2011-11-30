@@ -52,6 +52,7 @@ function bag.slashcommand(args)
   local stack = false
   local dump = false
   local sum = false
+  local move = false
   local slotspecs = {}
   local filter
   local stack_size = nil
@@ -73,6 +74,18 @@ function bag.slashcommand(args)
   else
     filter = lbag.filter()
     filter:slot(Utility.Item.Slot.Inventory())
+  end
+
+  if args['M'] then
+    if args['M'] == 'bank' then
+      move = Utility.Item.Slot.Bank()
+    elseif args['M'] == 'inventory' then
+      move = Utility.Item.Slot.Inventory()
+    elseif lbag.slotspec_p(args['M']) then
+      move = args['M']
+    else
+      bag.printf("Unknown slotspec '%s': should be slotspec, 'bank', or 'inventory'.", args['M'])
+    end
   end
 
   if args['d'] then
@@ -135,7 +148,11 @@ function bag.slashcommand(args)
   end
   if stack then
     lbag.stack(filter, stack_size)
-  else
+  end
+  if move then
+    lbag.move_items(filter, move, true)
+  end
+  if not (stack or move) then
     lbag.dump(filter)
   end
 end
@@ -158,4 +175,4 @@ f:exclude('rarity', 'common')
 f:describe("Trash (grey items)")
 bag.filters['t'] = f
 
-Library.LibGetOpt.makeslash(lbag.filter():argstring() .. "d:Df:lsS#v", "Baggotry", "bag", bag.slashcommand)
+Library.LibGetOpt.makeslash(lbag.filter():argstring() .. "d:Df:lM:sS#v", "Baggotry", "bag", bag.slashcommand)

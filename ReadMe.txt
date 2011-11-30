@@ -6,7 +6,7 @@ requested features.
 
 Usage:
 	/bag [-C char] [-f filter] [-l] [-SD] [-c category]
-	     [-beiw] [-q rarity] [word ...]
+	     [-M move_to] [-beiw] [-q rarity] [word ...]
 
 [-f filter] lets you name filters; "filter" can be a string and is used
 as an index into a table, and modifiers are stored in that filter, which
@@ -35,6 +35,10 @@ from the maximum stack size for the object; for instance, a stack size of
 
 Tries to combine all things tagged as "crafting" into the largest stacks
 it can.
+
+	/bag -M bank -c crafting
+
+Tries to move crafting materials into the bank if at all possible.
 
 	/bag -S 1 -c collectible
 

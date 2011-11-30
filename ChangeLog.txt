@@ -1,3 +1,6 @@
+2011/11/30:
+	* Add -M to move items (not very well supported)
+
 2011/11/20:
 	* Fix bug in rarity specifications.
 	* Call that 0.5 to release bug fix.
