@@ -1,3 +1,13 @@
+2012/02/29:
+	* Rework for the new LibEnfiltrate redesign of LibBaggotry.
+	* Clean up logic for stuff like merges.
+	* Use LibEnfiltrate to store filters.
+
+2011/12/12:
+	* Switch to LibAccounts, upgrade LibBaggotry
+	* Moving functionality is still sucky, sorry.
+	* Version bump.
+
 2011/11/30:
 	* Add -M to move items (not very well supported)
 

@@ -1,6 +1,6 @@
-VERSION=0.6
+VERSION=0.8
 PACKAGE=Baggotry
-EMBEDS=getopt libbaggotry
+EMBEDS=getopt libbaggotry enfiltrate
 
 include ../addon.mk
 
