@@ -1,3 +1,7 @@
+2012/03/23:
+	* Add tooltips for ownership across alts.
+	* Remove unused code.
+
 2012/02/29:
 	* Rework for the new LibEnfiltrate redesign of LibBaggotry.
 	* Clean up logic for stuff like merges.

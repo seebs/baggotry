@@ -3,11 +3,10 @@
 
 ]]--
 
-local bag = {}
+local addoninfo, bag = ...
 local lbag = Library.LibBaggotry
 local filt = Library.LibEnfiltrate
 bag.version = "VERSION"
-Baggotry = bag
 
 bag.filters = {}
 
@@ -21,32 +20,6 @@ function valuation(details, slot, value)
     value = value + details.sell
   end
   return value
-end
-
-function bag.strsplit(s, p)
-  local idx = string.find(s, p)
-  if idx then
-    return s.sub(s, 1, idx - 1), bag.strsplit(string.sub(s, idx + 1), p)
-  else
-    return s
-  end
-end
-
-function bag.filtery(filter, ...)
-  local args = { ... }
-  last = table.getn(args)
-  if last and last > 0 then
-    local char = string.sub(args[last], 1, 1)
-    if char == '+' then
-      args[last] = string.sub(args[last], 2)
-      filter:require(unpack(args))
-    elseif char == '!' then
-      args[last] = string.sub(args[last], 2)
-      filter:exclude(unpack(args))
-    else
-      filter:include(unpack(args))
-    end
-  end
 end
 
 function bag.slashcommand(args)
@@ -186,5 +159,126 @@ function bag.slashcommand(args)
   end
 end
 
+function bag.tooltip_update(data)
+  -- do nothing
+  local whoami = string.lower(Inspect.Unit.Detail('player').name)
+  local maxwidth = 0
+  local counter = 0
+  local charcounts = {}
+  local characters = {}
+  local mine = {}
+  local found_any = false
+  for _, details in pairs(data) do
+    local c = details._character
+    local s = details._slotspec
+    if c == whoami then
+      local ok, val = pcall(function() return Utility.Item.Slot.Parse(s) end)
+      if ok then
+        c = val or s or 'nil'
+      else
+        c = 'owned'
+	bag.printf("error: %s", type)
+      end
+      mine[c] = true
+    end
+    if charcounts[c] then
+      charcounts[c] = charcounts[c] + (details.stack or 1)
+    else
+      charcounts[c] = details.stack or 1
+      table.insert(characters, c)
+    end
+    found_any = true
+  end
+  if not found_any then
+    return false
+  end
+  table.sort(characters, function(a, b) return a > b end)
+  for _, c in ipairs(characters) do
+    local cap = string.upper(string.sub(c, 1, 1)) .. string.sub(c, 2)
+    local pretty = string.format("%s: %d", cap, charcounts[c])
+    counter = counter + 1
+    if counter > #bag.labels then
+      table.insert(bag.labels, UI.CreateFrame('Text', 'Baggotry Tooltip', bag.subframe))
+      bag.labels[counter]:SetPoint("BOTTOMRIGHT", bag.labels[counter - 1], "TOPRIGHT", 0, 1)
+      bag.labels[counter]:SetFontSize(bag.labels[counter]:GetFontSize() + 2)
+    end
+    bag.labels[counter]:SetText(pretty)
+    if mine[c] then
+      bag.labels[counter]:SetFontColor(0.95, 0.95, 0.6)
+    else
+      bag.labels[counter]:SetFontColor(0.85, 0.85, 0.85)
+    end
+    bag.labels[counter]:SetVisible(true)
+    local width = bag.labels[counter]:GetWidth()
+    if width > maxwidth then
+      maxwidth = width
+    end
+  end
+  bag.subframe:SetPoint("TOP", bag.labels[counter], "TOP", nil, -2)
+  bag.subframe:SetWidth(maxwidth + 4)
+  if counter < #bag.labels then
+    for i = counter + 1, #bag.labels do
+      bag.labels[i]:SetVisible(false)
+    end
+  end
+  return true
+end
+
+function bag.show_tooltip(data)
+  if not bag.tooltip then
+    bag.labels = {}
+    bag.tooltip = UI.CreateFrame('Frame', 'Baggotry Tooltip', bag.ui)
+    if not bag.tooltip then
+      bag.printf("Couldn't create a tooltip.  Oops.")
+      return
+    end
+    bag.tooltip:SetBackgroundColor(0.4, 0.4, 0.3, 1.0)
+    bag.subframe = UI.CreateFrame('Frame', 'Baggotry Tooltip', bag.tooltip)
+    bag.subframe:SetBackgroundColor(0.1, 0.1, 0.1, 1.0)
+    table.insert(bag.labels, UI.CreateFrame('Text', 'Baggotry Tooltip', bag.subframe))
+
+    bag.tooltip:SetPoint("TOPLEFT", bag.subframe, "TOPLEFT", -1, -1)
+    bag.tooltip:SetPoint("BOTTOMRIGHT", UI.Native.Tooltip, "TOPRIGHT", -5, 5)
+    bag.subframe:SetPoint("BOTTOMRIGHT", bag.tooltip, "BOTTOMRIGHT", -1, -1)
+    bag.labels[1]:SetPoint("BOTTOMRIGHT", bag.subframe, "BOTTOMRIGHT", -2, -2)
+    bag.labels[1]:SetFontSize(bag.labels[1]:GetFontSize() + 2)
+
+    bag.labels[1]:SetText("hello")
+  end
+  bag.tooltip:SetVisible(bag.tooltip_update(data))
+end
+
+function bag.hide_tooltip()
+  if bag.tooltip then
+    bag.tooltip:SetVisible(false)
+  end
+end
+
+function bag.tooltip_handler(tt_type, shown, buff)
+  if tt_type == 'item' or tt_type == 'itemtype' then
+    bag.this_frame = Inspect.Time.Frame()
+    details = Inspect.Item.Detail(shown)
+    if details and details.type then
+      local filter = filt.Filter:new(nil, 'item', 'Baggotry')
+      filter:require({ field = 'type', relation = '==', value = details.type })
+      lbag.apply_args(filter, { C = '*', s = 'all' })
+      local items = lbag.expand(filter)
+      bag.show_tooltip(items)
+    else
+      bag.printf("Invalid tooltip %s.", shown)
+      bag.hide_tooltip()
+    end
+  else
+    if Inspect.Time.Frame() ~= bag.this_frame then
+      bag.hide_tooltip()
+    end
+  end
+end
+
 
 Library.LibGetOpt.makeslash(filt.Filter:argstring() .. lbag.argstring() .. "d:Df:glM:mS#v", "Baggotry", "bag", bag.slashcommand)
+
+bag.ui = UI.CreateContext("Baggotry")
+bag.ui:SetStrata('tutorial')
+
+table.insert(Event.Tooltip, { bag.tooltip_handler, "Baggotry", "tooltip hook" } )
