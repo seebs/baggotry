@@ -1,3 +1,6 @@
+2012/06/21:
+	* Update TOC, etc.
+
 2012/03/23:
 	* Add tooltips for ownership across alts.
 	* Remove unused code.

@@ -2,7 +2,7 @@ Identifier = "Baggotry"
 
 Version = "VERSION"
 
-Email = "seebs@seebs.net"
+Email = "EMAIL"
 
 Dependencies = {
 	LibGetOpt = { "required", "before" },
@@ -26,5 +26,5 @@ RunOnStartup = {
   "Baggotry.lua"
 }
 
-Environment = { "1.6", "1.7", "1.8" }
+Environment = { "1.8", "1.9" }
 

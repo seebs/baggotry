@@ -265,7 +265,6 @@ function bag.tooltip_handler(tt_type, shown, buff)
       local items = lbag.expand(filter)
       bag.show_tooltip(items)
     else
-      bag.printf("Invalid tooltip %s.", shown)
       bag.hide_tooltip()
     end
   else
